@@ -12,37 +12,32 @@ def isWinner(x, nums):
         String: Name of the winner ("Maria", "Ben"), or "None" if winner cannot be determined.
     """
 
-    # Initialize wins for both players
     maria_wins, ben_wins = 0, 0
 
-    for _ in range(x):  # Loop for each round
-        # Create a copy to avoid modifying original list
+    for _ in range(x):
         remaining_nums = nums.copy()
 
-        # Maria's turn (always starts)
-        while True:
-            # Find the first prime number in the remaining list
-            prime = find_first_prime(remaining_nums)
-            if prime is None:
-                break  # No prime found, Ben wins the round
-            # Remove the prime and its multiples
-            remove_multiples(remaining_nums, prime)
-
-        # Ben's turn (if Maria didn't lose)
         while True:
             prime = find_first_prime(remaining_nums)
             if prime is None:
-                maria_wins += 1  # Ben couldn't move, Maria wins the round
+                ben_wins += 1
                 break
             remove_multiples(remaining_nums, prime)
 
-    # Determine the overall winner
+        while True:
+            prime = find_first_prime(remaining_nums)
+            if prime is None:
+                maria_wins += 1
+                break
+            remove_multiples(remaining_nums, prime)
+
     if maria_wins > ben_wins:
         return "Maria"
     elif maria_wins < ben_wins:
         return "Ben"
     else:
-        return "None"  # Tie (equal wins)
+        return "None"
+
 
 def find_first_prime(nums):
     """
@@ -59,6 +54,7 @@ def find_first_prime(nums):
         if is_prime(num):
             return num
     return None
+
 
 def is_prime(num):
     """
@@ -78,6 +74,7 @@ def is_prime(num):
             return False
     return True
 
+
 def remove_multiples(nums, prime):
     """
     Removes the prime number 'prime' and its multiples from the list 'nums'.
@@ -87,15 +84,12 @@ def remove_multiples(nums, prime):
         prime: Integer, the prime number to remove.
     """
 
-    """
-    This function iterates through the list 'nums' and removes all occurrences
-    of the prime number 'prime' and its multiples. It modifies the list 'nums'
-    in-place.
-    """
-
     i = 0
     while i < len(nums):
         if nums[i] % prime == 0:
-            del nums[i]  # Remove the element at index i
+            del nums[i]
         else:
-            i += 1  # Move to the next element only if not a multiple
+            i += 1
+
+# This line is added to make the `isWinner` function accessible as an attribute
+isWinner = isWinner
