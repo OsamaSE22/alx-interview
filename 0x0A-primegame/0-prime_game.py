@@ -1,3 +1,4 @@
+#!/usr/bin/python3
 def isWinner(x, nums):
     def sieve_of_eratosthenes(n):
         """Returns a list of primes up to n using the sieve of Eratosthenes"""

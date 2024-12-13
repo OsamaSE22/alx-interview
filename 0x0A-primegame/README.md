@@ -1,1 +1,2 @@
-py py
+#!/usr/bin/python3
+ejrg
