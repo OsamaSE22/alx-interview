@@ -1,74 +1,101 @@
 #!/usr/bin/python3
 
-def sieve_of_eratosthenes(n):
+def isWinner(x, nums):
     """
-    Returns a list of primes up to n using the sieve of Eratosthenes.
+    Determines the winner of 'x' rounds of the Prime Game, given a list 'nums'.
 
     Args:
-        n (int): The upper limit of the range to find primes.
+        x: Number of rounds (integer, 1 to 10000).
+        nums: List of consecutive integers (1 to n, n <= 10000).
 
     Returns:
-        list: A list of prime numbers up to n.
+        String: Name of the winner ("Maria", "Ben"), or "None" if winner cannot be determined.
     """
-    sieve = [True] * (n + 1)
-    sieve[0] = sieve[1] = False  # 0 and 1 are not primes
-    for i in range(2, int(n ** 0.5) + 1):
-        if sieve[i]:
-            for j in range(i * i, n + 1, i):
-                sieve[j] = False
-    return [i for i in range(2, n + 1) if sieve[i]]
 
+    # Initialize wins for both players
+    maria_wins, ben_wins = 0, 0
 
-def play_game(n):
-    """
-    Simulates a single game of prime number removal and returns the winner.
+    for _ in range(x):  # Loop for each round
+        # Create a copy to avoid modifying original list
+        remaining_nums = nums.copy()
 
-    Args:
-        n (int): The upper limit of the set of integers.
+        # Maria's turn (always starts)
+        while True:
+            # Find the first prime number in the remaining list
+            prime = find_first_prime(remaining_nums)
+            if prime is None:
+                break  # No prime found, Ben wins the round
+            # Remove the prime and its multiples
+            remove_multiples(remaining_nums, prime)
 
-    Returns:
-        str: The winner of the game ("Maria" or "Ben").
-    """
-    primes = sieve_of_eratosthenes(n)
-    numbers = [True] * (n + 1)  # True means the number is available
-    turn = 0  # 0 for Maria, 1 for Ben
+        # Ben's turn (if Maria didn't lose)
+        while True:
+            prime = find_first_prime(remaining_nums)
+            if prime is None:
+                maria_wins += 1  # Ben couldn't move, Maria wins the round
+                break
+            remove_multiples(remaining_nums, prime)
 
-    while primes:
-        prime = primes.pop(0)  # Pick the smallest prime available
-        if numbers[prime]:
-            for i in range(prime, n + 1, prime):
-                numbers[i] = False
-            turn = 1 - turn
-
-    return "Maria" if turn == 1 else "Ben"
-
-
-def is_winner(x, nums):
-    """
-    Determines the winner of x rounds of the prime game.
-
-    Args:
-        x (int): The number of rounds to play.
-        nums (list): A list of integers representing the upper limits for each round.
-
-    Returns:
-        str: The player who won the most rounds ("Maria" or "Ben").
-        None: If there is a tie.
-    """
-    maria_wins = 0
-    ben_wins = 0
-
-    for n in nums:
-        winner = play_game(n)
-        if winner == "Maria":
-            maria_wins += 1
-        elif winner == "Ben":
-            ben_wins += 1
-
+    # Determine the overall winner
     if maria_wins > ben_wins:
         return "Maria"
-    elif ben_wins > maria_wins:
+    elif maria_wins < ben_wins:
         return "Ben"
     else:
-        return None
+        return "None"  # Tie (equal wins)
 
+def find_first_prime(nums):
+    """
+    Finds the first prime number in the given list 'nums'.
+
+    Args:
+        nums: List of integers.
+
+    Returns:
+        Integer: The first prime number found, or None if no prime is found.
+    """
+
+    for num in nums:
+        if is_prime(num):
+            return num
+    return None
+
+def is_prime(num):
+    """
+    Checks if a number 'num' is prime.
+
+    Args:
+        num: Integer.
+
+    Returns:
+        Boolean: True if 'num' is prime, False otherwise.
+    """
+
+    if num <= 1:
+        return False
+    for i in range(2, int(num**0.5) + 1):
+        if num % i == 0:
+            return False
+    return True
+
+def remove_multiples(nums, prime):
+    """
+    Removes the prime number 'prime' and its multiples from the list 'nums'.
+
+    Args:
+        nums: List of integers (modified in-place).
+        prime: Integer, the prime number to remove.
+    """
+
+    """
+    This function iterates through the list 'nums' and removes all occurrences
+    of the prime number 'prime' and its multiples. It modifies the list 'nums'
+    in-place.
+    """
+
+    i = 0
+    while i < len(nums):
+        if nums[i] % prime == 0:
+            del nums[i]  # Remove the element at index i
+        else:
+            i += 1  # Move to the next element only if not a multiple
