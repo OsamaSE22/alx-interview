@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 
-def isWinner(x, nums):
+def is_winner(x, nums):
     """
     Determines the winner of 'x' rounds of the Prime Game, given a list 'nums'.
 
@@ -16,20 +16,18 @@ def isWinner(x, nums):
 
     for _ in range(x):
         remaining_nums = nums.copy()
+        current_player = "Maria"  # Maria always starts
 
-        while True:
+        while remaining_nums:
             prime = find_first_prime(remaining_nums)
             if prime is None:
-                ben_wins += 1
+                if current_player == "Maria":
+                    ben_wins += 1
+                else:
+                    maria_wins += 1
                 break
             remove_multiples(remaining_nums, prime)
-
-        while True:
-            prime = find_first_prime(remaining_nums)
-            if prime is None:
-                maria_wins += 1
-                break
-            remove_multiples(remaining_nums, prime)
+            current_player = "Ben" if current_player == "Maria" else "Maria"
 
     if maria_wins > ben_wins:
         return "Maria"
@@ -90,6 +88,3 @@ def remove_multiples(nums, prime):
             del nums[i]
         else:
             i += 1
-
-# This line is added to make the `isWinner` function accessible as an attribute
-isWinner = isWinner
